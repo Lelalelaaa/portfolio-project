@@ -48,8 +48,18 @@ app.use('/api/projects', require('./routes/projects'));
 // Routes for contact form messages
 app.use('/api/messages', require('./routes/messages'));
 
-// Simple check to confirm the server is running
-app.get('/', (req, res) => res.send('API Running'));
+// Simple check to confirm the server is running (moved to /api)
+app.get('/api', (req, res) => res.send('API Running'));
+
+// --- Serve React Frontend ---
+// Serve static files from the 'public' folder
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
+// For any other route, send the React index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // --- Start the server ---
 

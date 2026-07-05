@@ -7,7 +7,8 @@
 
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// If we are in development, use localhost. If in production, use the relative path.
+const API_URL = import.meta.env.DEV ? 'http://localhost:5000/api' : '/api';
 
 // Create an axios instance so we don't have to repeat the base URL every time
 const api = axios.create({
