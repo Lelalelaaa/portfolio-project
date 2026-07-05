@@ -120,8 +120,8 @@ const Admin = () => {
                 <input type="text" name="technologies" className="form-control" placeholder="React, Node, MongoDB" value={formData.technologies} onChange={handleInputChange} />
               </div>
               <div className="form-group">
-                <label className="form-label">Image URL</label>
-                <input type="url" name="imageUrl" className="form-control" value={formData.imageUrl} onChange={handleInputChange} />
+                <label className="form-label">Image URL or path (e.g. https://... or /project1.png)</label>
+                <input type="text" name="imageUrl" className="form-control" placeholder="https://example.com/image.png" value={formData.imageUrl} onChange={handleInputChange} />
               </div>
               <div className="form-group">
                 <label className="form-label">Problem Addressed</label>
@@ -165,9 +165,14 @@ const Admin = () => {
                         <button type="button" onClick={() => handleEditClick(p)} style={{ background: 'none', border: 'none', color: 'var(--text-color)', cursor: 'pointer' }}>
                           <Edit size={20} />
                         </button>
-                        <button type="button" onClick={() => handleDeleteProject(p._id)} style={{ background: 'none', border: 'none', color: 'var(--error-color)', cursor: 'pointer' }}>
-                          <Trash2 size={20} />
-                        </button>
+                        {!p.isDefault && (
+                          <button type="button" onClick={() => handleDeleteProject(p._id)} style={{ background: 'none', border: 'none', color: 'var(--error-color)', cursor: 'pointer' }}>
+                            <Trash2 size={20} />
+                          </button>
+                        )}
+                        {p.isDefault && (
+                          <span title="Default projects cannot be deleted" style={{ color: 'var(--text-muted)', fontSize: '0.75rem', alignSelf: 'center' }}>🔒</span>
+                        )}
                       </div>
                     </li>
                   ))}

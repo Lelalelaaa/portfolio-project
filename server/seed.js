@@ -14,7 +14,8 @@ const projects = [
     contribution: 'Full-stack development, UX/UI design, database architecture.',
     challenges: 'Ensuring high performance and smooth animations without sacrificing accessibility.',
     lessonsLearned: 'Mastered React Router and MongoDB integration for dynamic content.',
-    featured: true
+    featured: true,
+    isDefault: true
   },
   {
     title: 'Interna (Internship Finder)',
@@ -27,7 +28,8 @@ const projects = [
     contribution: 'Lead UI/UX Designer handling user research, wireframing, and interactive prototyping.',
     challenges: 'Designing a search and filter system that was powerful but not overwhelming.',
     lessonsLearned: 'Gained deep insights into user-centered design principles and usability testing.',
-    featured: true
+    featured: true,
+    isDefault: true
   },
   {
     title: 'Classroom Engagement Platform',
@@ -40,7 +42,8 @@ const projects = [
     contribution: 'Frontend development and real-time socket integration.',
     challenges: 'Handling concurrent websocket connections for live polling.',
     lessonsLearned: 'Learned how to manage real-time state across multiple clients.',
-    featured: true
+    featured: true,
+    isDefault: true
   }
 ];
 

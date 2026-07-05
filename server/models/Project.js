@@ -16,6 +16,7 @@ const projectSchema = new mongoose.Schema({
   challenges:    { type: String },          // Difficulties faced during the project
   lessonsLearned:{ type: String },          // What was learned from the project
   featured:      { type: Boolean, default: false }, // Whether to highlight this project
+  isDefault:     { type: Boolean, default: false },  // Seeded projects cannot be deleted
   createdAt:     { type: Date, default: Date.now }  // Automatically set when created
 });
 
