@@ -57,7 +57,7 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // For any other route, send the React index.html file
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
