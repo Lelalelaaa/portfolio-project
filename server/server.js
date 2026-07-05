@@ -55,7 +55,17 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // For any other route, send the React index.html file
-app.use((req, res) => {
+// but explicitly disable caching for index.html so the browser always gets the latest JS references
+app.use((req, res, next) => {
+  // If the request is for a missing static asset (like an old cached JS file), return 404
+  // Otherwise the server will send index.html as a JS file and crash the browser!
+  if (req.path.startsWith('/assets/') || req.path.match(/\.(js|css|png|jpg|svg)$/)) {
+    return res.status(404).send('Not found');
+  }
+  
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
