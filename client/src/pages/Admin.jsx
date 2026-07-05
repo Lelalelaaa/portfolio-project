@@ -16,6 +16,8 @@ const Admin = () => {
   });
 
   const fetchData = async () => {
+    // Safety net: always stop loading after 10 seconds
+    const timeout = setTimeout(() => setLoading(false), 10000);
     try {
       const pRes = await getProjects();
       setProjects(pRes.data);
@@ -24,6 +26,7 @@ const Admin = () => {
     } catch (err) {
       console.error(err);
     } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   };
