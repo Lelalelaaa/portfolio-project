@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getProjects, createProject, deleteProject, getMessages } from '../services/api';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Trash2, Plus } from 'lucide-react';
+import { getProjects, createProject, deleteProject, getMessages, updateProject } from '../services/api';
+import { ArrowLeft, Trash2, Plus, Edit } from 'lucide-react';
 
 const Admin = () => {
   const [projects, setProjects] = useState([]);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -35,22 +35,49 @@ const Admin = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCreateProject = async (e) => {
+  const handleEditClick = (project) => {
+    setEditingId(project._id);
+    setFormData({
+      title: project.title || '',
+      description: project.description || '',
+      problem: project.problem || '',
+      technologies: project.technologies ? project.technologies.join(', ') : '',
+      imageUrl: project.imageUrl || '',
+      githubUrl: project.githubUrl || '',
+      liveUrl: project.liveUrl || '',
+      contribution: project.contribution || '',
+      challenges: project.challenges || '',
+      lessonsLearned: project.lessonsLearned || ''
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({
+      title: '', description: '', problem: '', technologies: '', imageUrl: '',
+      githubUrl: '', liveUrl: '', contribution: '', challenges: '', lessonsLearned: ''
+    });
+  };
+
+  const handleSubmitProject = async (e) => {
     e.preventDefault();
     try {
       const dataToSubmit = {
         ...formData,
         technologies: formData.technologies.split(',').map(t => t.trim())
       };
-      await createProject(dataToSubmit);
-      setFormData({
-        title: '', description: '', problem: '', technologies: '', imageUrl: '',
-        githubUrl: '', liveUrl: '', contribution: '', challenges: '', lessonsLearned: ''
-      });
+      if (editingId) {
+        await updateProject(editingId, dataToSubmit);
+        alert('Project updated successfully!');
+      } else {
+        await createProject(dataToSubmit);
+        alert('Project created successfully!');
+      }
+      handleCancelEdit();
       fetchData(); // Refresh list
-      alert('Project created successfully!');
     } catch (err) {
-      alert('Error creating project');
+      alert('Error saving project');
     }
   };
 
@@ -76,10 +103,10 @@ const Admin = () => {
         <h1 style={{ marginBottom: '2rem' }}>Admin Dashboard</h1>
         
         <div className="admin-layout">
-          {/* Add Project Form */}
+          {/* Add/Edit Project Form */}
           <div style={{ backgroundColor: 'var(--surface-color)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Plus size={24}/> Add New Project</h2>
-            <form onSubmit={handleCreateProject}>
+            <h2 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Plus size={24}/> {editingId ? 'Edit Project' : 'Add New Project'}</h2>
+            <form onSubmit={handleSubmitProject}>
               <div className="form-group">
                 <label className="form-label">Project Title *</label>
                 <input type="text" name="title" className="form-control" required value={formData.title} onChange={handleInputChange} />
@@ -118,7 +145,10 @@ const Admin = () => {
                   <input type="url" name="liveUrl" className="form-control" value={formData.liveUrl} onChange={handleInputChange} />
                 </div>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Create Project</button>
+              <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{editingId ? 'Save Changes' : 'Create Project'}</button>
+                {editingId && <button type="button" onClick={handleCancelEdit} className="btn btn-outline" style={{ flex: 1 }}>Cancel</button>}
+              </div>
             </form>
           </div>
 
@@ -131,9 +161,14 @@ const Admin = () => {
                   {projects.map(p => (
                     <li key={p._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
                       <span>{p.title}</span>
-                      <button onClick={() => handleDeleteProject(p._id)} style={{ background: 'none', border: 'none', color: 'var(--error-color)', cursor: 'pointer' }}>
-                        <Trash2 size={20} />
-                      </button>
+                      <div style={{ display: 'flex', gap: '1rem' }}>
+                        <button type="button" onClick={() => handleEditClick(p)} style={{ background: 'none', border: 'none', color: 'var(--text-color)', cursor: 'pointer' }}>
+                          <Edit size={20} />
+                        </button>
+                        <button type="button" onClick={() => handleDeleteProject(p._id)} style={{ background: 'none', border: 'none', color: 'var(--error-color)', cursor: 'pointer' }}>
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
