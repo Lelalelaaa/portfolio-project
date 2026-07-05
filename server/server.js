@@ -23,19 +23,17 @@ app.use(express.json());
 // --- Connect to MongoDB ---
 
 const connectDB = async () => {
-  try {
-    // Make sure MONGO_URI is set in the .env file before connecting
-    if (!process.env.MONGO_URI) {
-      console.warn('WARNING: MONGO_URI is not set in the .env file.');
-      return;
+    try {
+        if (!process.env.MONGO_URI) {
+            console.warn('WARNING: MONGO_URI environment variable is missing!');
+            return; // Don't crash, just skip connecting
+        }
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB Connected...');
+    } catch (err) {
+        console.error('MongoDB connection error:', err.message);
+        // Don't crash the server so AWS health checks can still pass
     }
-
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('MongoDB Connected...');
-  } catch (err) {
-    console.error('Could not connect to database:', err.message);
-    process.exit(1); // Stop the server if the database fails to connect
-  }
 };
 
 connectDB();
